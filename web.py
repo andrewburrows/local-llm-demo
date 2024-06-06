@@ -1,38 +1,43 @@
-from langchain_community.chat_models import ChatOllama
-from langchain.prompts import ChatPromptTemplate
-from langchain.schema import StrOutputParser
-from langchain.schema.runnable import Runnable
-from langchain.schema.runnable.config import RunnableConfig
-
+import asyncio
 import chainlit as cl
+from langchain_community.document_loaders import DirectoryLoader, UnstructuredPDFLoader
+from langchain_community.document_loaders import UnstructuredFileLoader
+from langchain_community.embeddings.sentence_transformer import (SentenceTransformerEmbeddings, )
+from langchain_community.vectorstores import Chroma
+from langchain_text_splitters import CharacterTextSplitter
+
+from rag_llm import RagLLm
+
+loader = DirectoryLoader("./documents/markdown", glob="**/*.md", show_progress=True, loader_cls=UnstructuredFileLoader)
+documents = loader.load()
+text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+pdf_loader = DirectoryLoader('./documents/pdf', glob="**/*.pdf", show_progress=True, loader_cls=UnstructuredPDFLoader)
+pdf_docs = pdf_loader.load()
+pdf_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+split_docs = text_splitter.split_documents(documents) + pdf_splitter.split_documents(pdf_docs)
+embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+vectorstore = Chroma.from_documents(documents=split_docs,
+                                    embedding=embedding_function,
+                                    persist_directory="./db")
+retriever = vectorstore.as_retriever()
+rag_llm = RagLLm(retriever)
 
 
 @cl.on_chat_start
 async def on_chat_start():
-    model = ChatOllama(model="llama3", streaming=True)
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            (
-                "system",
-                "You're a very knowledgeable assistant who provides accurate answers to my questions.",
-            ),
-            ("user", "{question}"),
-        ]
-    )
-    runnable = prompt | model | StrOutputParser()
-    cl.user_session.set("runnable", runnable)
+    cl.user_session.set("answerer", rag_llm)
 
 
 @cl.on_message
 async def on_message(message: cl.Message):
-    runnable = cl.user_session.get("runnable")  # type: Runnable
-
+    answerer = cl.user_session.get("answerer")
     msg = cl.Message(content="")
 
-    async for chunk in runnable.astream(
-        {"question": message.content},
-        config=RunnableConfig(callbacks=[cl.LangchainCallbackHandler()]),
-    ):
-        await msg.stream_token(chunk)
+    async def generate_chunks(question):
+        response = answerer.generate_answer(question)
+        yield response
 
+    async for chunk in generate_chunks(message.content):
+        await msg.stream_token(chunk)
+        await asyncio.sleep(0.01)
     await msg.send()
