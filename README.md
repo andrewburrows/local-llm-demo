@@ -17,3 +17,9 @@ python -m venv ./venv
 source ./venv/bin/activate
 pip install -r requirements.txt
 ```
+
+## Run UI
+
+```shell
+chainlit run web.py -w
+```

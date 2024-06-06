@@ -1,3 +1,6 @@
 db*/
 venv
 .idea
+.chainlit
+.files
+__pycache__
