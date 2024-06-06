@@ -1,7 +1,6 @@
 from langchain.load import dumps, loads
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.chat_models import ChatOllama
-from langchain_core.messages import AIMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.vectorstores import VectorStoreRetriever
 
@@ -34,29 +33,15 @@ class RagLLm:
         self.prompt_question = ChatPromptTemplate.from_template(template_question)
         self.retriever = retriever
 
-    def generate_answer(self, question):
-        max_attempts = 3
-        response = ''
-        attempt = 0
-        while not response and attempt < max_attempts:
-            llm_response: AIMessage = ChatOllama(model="llama3").invoke(
-                self.prompt_question.format(context=(self._generate_queries | self.retriever.map() | self._reciprocal_rank_fusion)
-                                            .invoke({"question": question}), question=question))
-            response = StrOutputParser().parse(text=llm_response.content)
-            attempt += 1
-        return response
-
-    def _generate_queries(self, question):
-        max_attempts = 5
-        generated_queries = []
-        attempt = 0
-        while len(generated_queries) <= 3 and attempt < max_attempts:
-            llm_response: AIMessage = ChatOllama(model="llama3").invoke(
-                self.prompt_rag_fusion.format(question=question))
-            generated_queries = StrOutputParser().parse(text=llm_response.content).split("\n")
-            generate_queries = list(filter(lambda item: item.strip(), generated_queries))
-            attempt += 1
-        return generate_queries
+    def retrieval_chain(self):
+        prompt_rag_fusion = ChatPromptTemplate.from_template(template_multiquery)
+        generate_queries = (
+                prompt_rag_fusion
+                | ChatOllama(model="llama3")
+                | StrOutputParser()
+                | (lambda x: x.split("\n"))
+        )
+        return generate_queries | self.retriever.map() | self._reciprocal_rank_fusion
 
     def _reciprocal_rank_fusion(self, results: list[list], k=60):
         fused_scores = {}

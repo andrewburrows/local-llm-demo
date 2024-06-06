@@ -1,9 +1,14 @@
-import asyncio
+from operator import itemgetter
+
 import chainlit as cl
+from langchain.prompts import ChatPromptTemplate
+from langchain.schema.runnable.config import RunnableConfig
+from langchain_community.chat_models import ChatOllama
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredPDFLoader
 from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain_community.embeddings.sentence_transformer import (SentenceTransformerEmbeddings, )
 from langchain_community.vectorstores import Chroma
+from langchain_core.output_parsers import StrOutputParser
 from langchain_text_splitters import CharacterTextSplitter
 
 from rag_llm import RagLLm
@@ -22,22 +27,34 @@ vectorstore = Chroma.from_documents(documents=split_docs,
 retriever = vectorstore.as_retriever()
 rag_llm = RagLLm(retriever)
 
+template_question = """Answer the following question based on this context:
+
+{context}
+
+Question: {question}
+"""
+
 
 @cl.on_chat_start
 async def on_chat_start():
-    cl.user_session.set("answerer", rag_llm)
+    prompt = ChatPromptTemplate.from_template(template_question)
+    final_rag_chain = (
+            {"context": rag_llm.retrieval_chain(),
+             "question": itemgetter("question")}
+            | prompt
+            | ChatOllama(model="llama3")
+            | StrOutputParser()
+    )
+    cl.user_session.set("answerer", final_rag_chain)
 
 
 @cl.on_message
 async def on_message(message: cl.Message):
-    answerer = cl.user_session.get("answerer")
+    runnable = cl.user_session.get("answerer")
     msg = cl.Message(content="")
-
-    async def generate_chunks(question):
-        response = answerer.generate_answer(question)
-        yield response
-
-    async for chunk in generate_chunks(message.content):
+    async for chunk in runnable.astream(
+            {"question": message.content},
+            config=RunnableConfig(callbacks=[cl.LangchainCallbackHandler()]),
+    ):
         await msg.stream_token(chunk)
-        await asyncio.sleep(0.01)
     await msg.send()
