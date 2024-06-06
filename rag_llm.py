@@ -18,19 +18,10 @@ The three queries are (3 queries):
 
 The three queries are (3 queries):"""
 
-template_question = """Answer the following question based on this context:
-
-{context}
-
-Question: {question}
-"""
-
 
 class RagLLm:
 
     def __init__(self, retriever: VectorStoreRetriever):
-        self.prompt_rag_fusion = ChatPromptTemplate.from_template(template_multiquery)
-        self.prompt_question = ChatPromptTemplate.from_template(template_question)
         self.retriever = retriever
 
     def retrieval_chain(self):
