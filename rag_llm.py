@@ -27,11 +27,23 @@ class RagLLm:
 
     def retrieval_chain(self):
         prompt_rag_fusion = ChatPromptTemplate.from_template(template_multiquery)
+
+        def print_queries(queries: list[str]):
+            print("QUERIES GENERATED FOR RAG:")
+            for query in queries:
+                print(f"{query}")
+            return queries
+
+        def remove_empty(queries: list[str]):
+            return [query.strip() for query in queries if query.strip()]
+
         generate_queries = (
                 prompt_rag_fusion
                 | ChatOllama(model="llama3")
                 | StrOutputParser()
                 | (lambda x: x.split("\n"))
+                | remove_empty
+                | print_queries
         )
         return generate_queries | self.retriever.map() | self._reciprocal_rank_fusion
 
