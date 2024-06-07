@@ -13,7 +13,6 @@ asttokens==2.4.1
 async-lru==2.0.4
 async-timeout==4.0.3
 asyncer==0.0.2
-asyncio==3.4.3
 attrs==23.2.0
 Babel==2.15.0
 backoff==2.2.1
@@ -112,6 +111,7 @@ langsmith==0.1.74
 layoutparser==0.3.4
 Lazify==0.4.0
 literalai==0.0.601
+llvmlite==0.42.0
 lxml==5.2.2
 Markdown==3.6
 markdown-it-py==3.0.0
@@ -135,6 +135,7 @@ networkx==3.3
 nltk==3.8.1
 notebook==7.2.0
 notebook_shim==0.2.4
+numba==0.59.1
 numpy==1.26.4
 oauthlib==3.2.2
 olefile==0.47
@@ -188,6 +189,7 @@ pydantic==2.7.3
 pydantic_core==2.18.4
 Pygments==2.18.0
 PyJWT==2.8.0
+pynndescent==0.5.12
 pypandoc==1.13
 pyparsing==3.1.2
 pypdf==4.2.0
@@ -258,6 +260,7 @@ types-requests==2.32.0.20240602
 typing-inspect==0.9.0
 typing_extensions==4.12.1
 tzdata==2024.1
+umap-learn==0.5.6
 unstructured==0.14.4
 unstructured-client==0.18.0
 unstructured-inference==0.7.33
