@@ -1,6 +1,8 @@
-# Welcome to Project Genie 🚀🤖
+#           Welcome to Genie 🧞🤖
+Genie is here to answer all your questions.
 
-Genie is a powerful tool designed to help you prototype, debug and share applications built on top of LLMs.
+![image info](/public/genie.webp)
+
 
 ## Demo Day
 
