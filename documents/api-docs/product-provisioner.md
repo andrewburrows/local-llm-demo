@@ -12,9 +12,9 @@ All API requests require authentication using a valid JWT (JSON Web Token) obtai
 ## Endpoints
 ### Provision a Product
 Provisions a product for the customer.
-URL: /products
-Method: POST
-Request Body:
+- **URL:** /products
+- **Method:** POST
+- **Request Body:**
 ```{
 "productId": "string",
 "quantity": integer,
@@ -23,9 +23,9 @@ Request Body:
 }
 }
 ```
-Response:
+- **Response:**
 
-- Success: 200 OK
+- **Success:** 200 OK
 ```{
 "message": "Product provisioned successfully",
 "provisionedProducts": [
@@ -40,7 +40,7 @@ Response:
 ]
 }
 ```
-- Error:
+- **Error:**
   - 400 Bad Request - Invalid product selection or missing customization details
   - 404 Not Found - Product not found
   - 409 Conflict - Product not available in the inventory or quota exceeded
@@ -49,33 +49,34 @@ Response:
 ### Check Product Availability
 Checks the availability of a product in the inventory.
 
-URL: /products/{productId}/availability
-Method: GET
-Path Parameters:
+- **URL:** /products/{productId}/availability
+- **Method:** GET
+- **Path Parameters:**
 
 productId - The ID of the product to check availability for
 
 
-Response:
-```
-Success: 200 OK
-jsonCopy code{
+- **Response:**
+
+- **Success:** 200 OK
+```json
+{
 "productId": "string",
 "available": boolean,
 "quantity": integer
 }
 ```
-- Error:
+- **Error:**
   - 404 Not Found - Product not found
   - 500 Internal Server Error - An unexpected error occurred
 
 ### Get Provisioned Products
 Retrieves the list of provisioned products for the customer.
 
-URL: /provisioned-products
-Method: GET
-Response:
-- Success: 200 OK
+- **URL:** /provisioned-products
+- **Method:** GET
+- **Response:**
+- **Success:** 200 OK
 ```
 [
     {
@@ -88,10 +89,10 @@ Response:
     }
 ]
 ```
-- Error:
+- **Error:**
   - 500 Internal Server Error - An unexpected error occurred
 
-Error Responses
+## Error Responses
 The API may return the following error responses:
 
 - 400 Bad Request - The request is invalid or missing required parameters.
