@@ -12,27 +12,18 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_text_splitters import CharacterTextSplitter
 
 from rag_llm import RagLLm
+from vector_store import VectorStore
 
-loader = DirectoryLoader("./documents/markdown", glob="**/*.md", show_progress=True, loader_cls=UnstructuredFileLoader)
-documents = loader.load()
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-pdf_loader = DirectoryLoader('./documents/pdf', glob="**/*.pdf", show_progress=True, loader_cls=UnstructuredPDFLoader)
-pdf_docs = pdf_loader.load()
-pdf_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-split_docs = text_splitter.split_documents(documents) + pdf_splitter.split_documents(pdf_docs)
-embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
-vectorstore = Chroma.from_documents(documents=split_docs,
-                                    embedding=embedding_function,
-                                    persist_directory="./db")
-retriever = vectorstore.as_retriever()
+vector_store = VectorStore()
+retriever = vector_store.load_store()
 rag_llm = RagLLm(retriever)
 
 template_question = """Answer the following question based on this context:
-
-{context}
-
-Question: {question}
-"""
+        
+        {context}
+        
+        Question: {question}
+        """
 
 
 @cl.on_chat_start
