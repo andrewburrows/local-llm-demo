@@ -4,12 +4,7 @@ import chainlit as cl
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable.config import RunnableConfig
 from langchain_community.chat_models import ChatOllama
-from langchain_community.document_loaders import DirectoryLoader, UnstructuredPDFLoader
-from langchain_community.document_loaders import UnstructuredFileLoader
-from langchain_community.embeddings.sentence_transformer import (SentenceTransformerEmbeddings, )
-from langchain_community.vectorstores import Chroma
 from langchain_core.output_parsers import StrOutputParser
-from langchain_text_splitters import CharacterTextSplitter
 
 from rag_llm import RagLLm
 from vector_store import VectorStore
@@ -19,9 +14,9 @@ retriever = vector_store.load_store()
 rag_llm = RagLLm(retriever)
 
 template_question = """Answer the following question based on this context:
-        
+
         {context}
-        
+
         Question: {question}
         """
 

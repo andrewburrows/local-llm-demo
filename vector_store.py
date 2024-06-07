@@ -17,11 +17,16 @@ class VectorStore:
 
     def load_store(self):
         split_documents: list[
-            Document] = self.split_markdown_documents() + self.split_feature_documents() + self.split_pdf_documents()
+            Document] = self.split_markdown_documents() + self.split_feature_documents() + self.split_pdf_documents() + self.split_api_docs()
         vectorstore = Chroma.from_documents(documents=split_documents,
                                             embedding=self.sentence_transformer,
-                                            persist_directory="./db4")
+                                            persist_directory="./db5")
         return vectorstore.as_retriever()
+
+    def split_api_docs(self) -> list[Document]:
+        documents: list[Document] = DirectoryLoader("./documents/api-docs", glob="**/*.md", show_progress=True,
+                                                    loader_cls=UnstructuredMarkdownLoader).load()
+        return self.text_splitter.split_documents(documents)
 
     def split_cassandra_documents(self) -> list[Document]:
         documents: list[Document] = DirectoryLoader("./documents/cql", glob="**/*.cql", show_progress=True,
