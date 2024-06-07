@@ -1,8 +1,9 @@
-from langchain.load import dumps, loads
+from langchain.load import dumps
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.chat_models import ChatOllama
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.vectorstores import VectorStoreRetriever
+from langchain_core.documents import Document
 
 template_multiquery = """You are a helpful assistant that generates multiple sub-questions related to an input question.
 The goal is to break down the input into a set of sub-problems / sub-questions that can be answers in isolation.
@@ -34,17 +35,18 @@ class RagLLm:
         )
         return generate_queries | self.retriever.map() | self._reciprocal_rank_fusion
 
-    def _reciprocal_rank_fusion(self, results: list[list], k=60):
-        fused_scores = {}
-        for docs in results:
-            for rank, doc in enumerate(docs):
-                doc_str = dumps(doc)
-                if doc_str not in fused_scores:
-                    fused_scores[doc_str] = 0
-                previous_score = fused_scores[doc_str]
-                fused_scores[doc_str] += 1 / (rank + k)
-        reranked_results = [
-            (loads(doc), score)
-            for doc, score in sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)
-        ]
-        return reranked_results
+    def _reciprocal_rank_fusion(self, retrieved_documents: list[list[Document]], base_rank=60):
+        fused_ranked_scores = {}
+        for documents in retrieved_documents:
+            for rank, doc in enumerate(documents):
+                document_as_json = dumps(doc)
+                if document_as_json not in fused_ranked_scores:
+                    fused_ranked_scores[document_as_json] = 0
+                fused_ranked_scores[document_as_json] += 1 / (rank + base_rank)
+        sorted_ranked_results = [(doc, score) for doc, score in sorted(fused_ranked_scores.items(),
+                                                                       key=lambda x: x[1],
+                                                                       reverse=True)]
+        if len(sorted_ranked_results) > 2:
+            return [doc for doc, _ in sorted_ranked_results[:2]]
+        else:
+            return [doc for doc, _ in sorted_ranked_results]
