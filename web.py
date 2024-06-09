@@ -5,27 +5,23 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable.config import RunnableConfig
 from langchain_community.chat_models import ChatOllama
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.vectorstores import VectorStoreRetriever
 
-from rag_llm import RagLLm
-from vector_store import VectorStore
+from llm.config_loader import load_yaml
+from llm.context_retrieval.context_retriever_factory import ContextRetrieverFactory
+from llm.vector_store import VectorStore
 
+
+config: dict = load_yaml('llm-config.yml')
 vector_store = VectorStore()
-retriever = vector_store.load_store()
-rag_llm = RagLLm(retriever)
-
-template_question = """Answer the following question based on this context:
-
-        {context}
-
-        Question: {question}
-        """
-
+retriever: VectorStoreRetriever = vector_store.load_store()
+context_retriever = ContextRetrieverFactory(config).create_context_retriever(retriever)
 
 @cl.on_chat_start
 async def on_chat_start():
-    prompt = ChatPromptTemplate.from_template(template_question)
+    prompt = ChatPromptTemplate.from_template(config['llm-query-template'])
     final_rag_chain = (
-            {"context": rag_llm.retrieval_chain(),
+            {"context": context_retriever.query_context_chain(),
              "question": itemgetter("question")}
             | prompt
             | ChatOllama(model="llama3")

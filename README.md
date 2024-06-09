@@ -63,7 +63,7 @@ Please note that the Mermaid diagrams, images, and CQL files are currently not i
 ### Usage
 To run the web UI:
 ```shell
-chainlit run llm/web.py -w
+chainlit run web.py -w
 ```
 After running navigate to [localhost:8000](http://localhost:8000).
 

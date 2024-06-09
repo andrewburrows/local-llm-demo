@@ -2,10 +2,9 @@ from langchain_community.document_loaders import DirectoryLoader, UnstructuredPD
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain_community.embeddings.sentence_transformer import (SentenceTransformerEmbeddings, )
 from langchain_community.vectorstores import Chroma
-from langchain_text_splitters import CharacterTextSplitter
 from langchain_core.documents import Document
-
-from langchain.document_loaders.generic import GenericLoader
+from langchain_core.vectorstores import VectorStoreRetriever
+from langchain_text_splitters import CharacterTextSplitter
 
 
 class VectorStore:
@@ -14,7 +13,7 @@ class VectorStore:
         self.sentence_transformer = SentenceTransformerEmbeddings(model_name=sentence_transformer_model)
         self.text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 
-    def load_store(self):
+    def load_store(self) -> VectorStoreRetriever:
         split_documents: list[
             Document] = self.split_markdown_documents() + self.split_feature_documents() + self.split_pdf_documents() + self.split_api_docs()
         vectorstore = Chroma.from_documents(documents=split_documents,

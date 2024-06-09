@@ -1,32 +1,21 @@
 from langchain.load import dumps
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.chat_models import ChatOllama
+from langchain_core.documents import Document
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.vectorstores import VectorStoreRetriever
-from langchain_core.documents import Document
 
-template_multiquery = """You are a helpful assistant that generates multiple sub-questions related to an input question.
-The goal is to break down the input into a set of sub-problems / sub-questions that can be answers in isolation.
-Generate multiple search queries related to: {question}
-
-You must only generate 3 queries. No more than 3 is allowed.
-
-Example:
-The three queries are (3 queries):
-1. This is the first query.
-2. This is the second query.
-3. This is the third query.
-
-The three queries are (3 queries):"""
+from llm.context_retrieval.context_retriever import ContextRetriever, template_multiquery
 
 
-class RagLLm:
+class ReciprocalRankFusion(ContextRetriever):
 
-    def __init__(self, retriever: VectorStoreRetriever):
-        self.retriever = retriever
+    def __init__(self, retriever: VectorStoreRetriever, multi_query_request: str):
+        super().__init__(retriever)
+        self.multi_query_request = multi_query_request
 
-    def retrieval_chain(self):
-        prompt_rag_fusion = ChatPromptTemplate.from_template(template_multiquery)
+    def query_context_chain(self):
+        prompt_rag_fusion = ChatPromptTemplate.from_template(self.multi_query_request)
 
         def print_queries(queries: list[str]):
             print("QUERIES GENERATED FOR RAG:")
