@@ -1,5 +1,4 @@
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredPDFLoader
-from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain_community.embeddings.sentence_transformer import (SentenceTransformerEmbeddings, )
 from langchain_community.vectorstores import Chroma
