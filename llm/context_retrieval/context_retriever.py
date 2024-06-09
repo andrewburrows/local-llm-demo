@@ -19,7 +19,7 @@ The three queries are (3 queries):"""
 class ContextRetriever(ABC):
 
     def __init__(self, retriever: VectorStoreRetriever):
-        self.retriever = retriever
+        self.retriever:VectorStoreRetriever = retriever
 
     @abstractmethod
     def query_context_chain(self):

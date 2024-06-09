@@ -18,7 +18,7 @@ class ReciprocalRankFusion(ContextRetriever):
         prompt_rag_fusion = ChatPromptTemplate.from_template(self.multi_query_request)
 
         def print_queries(queries: list[str]):
-            print("QUERIES GENERATED FOR RAG:")
+            print("-----| QUERIES GENERATED FOR RAG |-----")
             for query in queries:
                 print(f"{query}")
             return queries
@@ -37,17 +37,22 @@ class ReciprocalRankFusion(ContextRetriever):
         return generate_queries | self.retriever.map() | self._reciprocal_rank_fusion
 
     def _reciprocal_rank_fusion(self, retrieved_documents: list[list[Document]], base_rank=60):
-        fused_ranked_scores = {}
+        print(f"-----| Documents retrieved |-----")
+        fused_ranked_scores: dict[any, float] = {}
         for documents in retrieved_documents:
-            for rank, doc in enumerate(documents):
-                document_as_json = dumps(doc)
-                if document_as_json not in fused_ranked_scores:
-                    fused_ranked_scores[document_as_json] = 0
-                fused_ranked_scores[document_as_json] += 1 / (rank + base_rank)
-        sorted_ranked_results = [(doc, score) for doc, score in sorted(fused_ranked_scores.items(),
-                                                                       key=lambda x: x[1],
-                                                                       reverse=True)]
+            for rank, document in enumerate(documents):
+                page_content = document.page_content
+                print(f"rank:{rank}, page_content:{page_content}")
+                if page_content not in fused_ranked_scores:
+                    fused_ranked_scores[page_content] = 0
+                fused_ranked_scores[page_content] += 1 / (rank + base_rank)
+        sorted_ranked_results = [(page_content, score) for page_content, score in sorted(fused_ranked_scores.items(),
+                                                                                         key=lambda x: x[1],
+                                                                                         reverse=True)]
         if len(sorted_ranked_results) > 2:
-            return [doc for doc, _ in sorted_ranked_results[:2]]
+            response = [page_content for page_content, _ in sorted_ranked_results[:2]]
         else:
-            return [doc for doc, _ in sorted_ranked_results]
+            response = [page_content for page_content, _ in sorted_ranked_results]
+        print(f"-----| Filtered ranked results |-----")
+        print(response)
+        return response

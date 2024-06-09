@@ -1,8 +1,8 @@
-rag-function: "reciprocal_rank_fusion"
+rag-function: "cosine_similarity_rerank"
 llm-query-template: |-
   Answer the following question based on this context:
 
-  {context}
+  Context: {context}
 
   Question: {question}
 multi-query-request-template: |-
