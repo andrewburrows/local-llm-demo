@@ -1,8 +1,12 @@
 db*/
 venv
+venv39/
 .idea
 .chainlit
 .files
 __pycache__
 .ipynb_checkpoints/
+jupyter/.ragatouille
+.python-version
 .DS_Store
+.ragatouille/
