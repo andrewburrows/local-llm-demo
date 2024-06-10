@@ -23,11 +23,10 @@ The project leverages the following components:
 A synthetic dataset of documents is included in the [documents](./documents) directory to demonstrate the LLM's ability to generate responses based on information not present in its training data. The dataset represents a fictional product called "Product Purchaser Solution" that enables users to purchase products from a website.
 
 The dataset consists of:
-- [API documentation](./documents/api-docs)
+- [API documentation](./documents/api_docs)
 - [CQL schemas](./documents/cql)
-- [Cucumber feature files](./documents/features)
-- [Markdown documents](./documents/markdown)
-- [PDF files](./documents/pdf)
+- [Cucumber feature files](./documents/cucumber_feature_files)
+- [High level documents](./documents/high_level_docs). Containing both pdf and markdown documents. To demonstrate OCR capabilities.
 - [Mermaid diagrams](./documents/mermaid)
 - [Images](./documents/images)
 
