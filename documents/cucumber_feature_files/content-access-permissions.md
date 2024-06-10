@@ -8,7 +8,6 @@ Scenario Outline: Customer with <role> role can access <content>
 Given the customer has the role "<role>"
 When the customer requests access to "<content>"
 Then the customer should be granted access
-
 Examples:
 | role        | content         |
 | standard    | basic_content   |
@@ -20,7 +19,6 @@ Given the customer has the role "<role>"
 When the customer requests access to "<content>"
 Then the customer should be denied access
 And an "access_denied" error message should be returned
-
 Examples:
 | role     | content         |
 | standard | premium_content |  

@@ -56,7 +56,6 @@ When the user makes a request to a protected resource
 Then the service should return an error response with status code <status>
 And the error response should contain error code <error_code>
 And the error response should contain error message <error_message>
-
     Examples:
       | status | error_code                   | error_message                           |
       | 403    | AZ_100      | User does not have the required permission |
@@ -70,7 +69,6 @@ When the user makes a request to a resource
 Then the service should return an error response with status code <status>
 And the error response should contain error code <error_code>
 And the error response should contain error message <error_message>
-
     Examples:
       | status | error_code                   | error_message                                 |
       | 400    | R_100     | Invalid request payload or parameters         |
@@ -86,7 +84,6 @@ And an internal server error occurs
 Then the service should return an error response with status code <status>
 And the error response should contain error code <error_code>
 And the error response should contain error message <error_message>
-
     Examples:
       | status | error_code                   | error_message                                 |
       | 500    | S_100        | Internal server error occurred                |
@@ -101,7 +98,6 @@ And an error occurs during the integration
 Then the service should return an error response with status code <status>
 And the error response should contain error code <error_code>
 And the error response should contain error message <error_message>
-
     Examples:
       | status | error_code                   | error_message                                 |
       | 424    | I_100 | Failed dependency or external service unavailable |
@@ -114,7 +110,6 @@ When the user makes a request with invalid data
 Then the service should return an error response with status code <status>
 And the error response should contain error code <error_code>
 And the error response should contain error message <error_message>
-
     Examples:
       | status | error_code                   | error_message                                 |
       | 400    | V_100 | Invalid parameter value provided              |
@@ -128,7 +123,6 @@ When the user makes a request that triggers a custom error condition
 Then the service should return an error response with status code <status>
 And the error response should contain error code <error_code>
 And the error response should contain error message <error_message>
-
     Examples:
       | status | error_code                   | error_message                                 |
       | 400    | C_100 | Account is in an invalid state for the operation |

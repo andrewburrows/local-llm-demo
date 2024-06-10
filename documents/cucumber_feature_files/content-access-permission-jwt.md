@@ -31,7 +31,6 @@ viewer:
 And the customer has the role "<role>"
 When the customer requests access to "<content>"
 Then the access should be "<access>" based on the role graph
-
 Examples:
 | role        | content           | access    |
 | admin       | restricted_area   | granted   |
