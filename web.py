@@ -14,7 +14,7 @@ from llm.vector_store import VectorStore
 
 config: dict = load_yaml('llm-config.yml')
 vector_store = VectorStore()
-retriever: VectorStoreRetriever = vector_store.load_store()
+retriever = vector_store.load_store()
 context_retriever = ContextRetrieverFactory(config).create_context_retriever(retriever)
 
 @cl.on_chat_start

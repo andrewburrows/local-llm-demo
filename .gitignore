@@ -1,6 +1,7 @@
 db*/
 venv
-venv39/
+venv39
+.ragatouille
 .idea
 .chainlit
 .files
@@ -9,4 +10,3 @@ __pycache__
 jupyter/.ragatouille
 .python-version
 .DS_Store
-.ragatouille/
