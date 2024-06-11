@@ -7,3 +7,4 @@ __pycache__
 .ipynb_checkpoints/
 jupyter/.ragatouille
 .python-version
+.DS_Store
