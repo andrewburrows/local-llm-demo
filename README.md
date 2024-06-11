@@ -55,8 +55,10 @@ Please note that the Mermaid diagrams, images, and CQL files are currently not i
    ```
 5. Set up a virtual environment and install the required Python packages
     ```shell
-   python -m venv ./venv
-    source ./venv/bin/activate
+    pyenv install 3.9
+    pyenv local 3.9
+    python -m venv ./venv39
+    source ./venv39/bin/activate
     pip install -r requirements.txt
     ```
 ### Usage

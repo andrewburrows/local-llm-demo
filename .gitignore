@@ -1,5 +1,7 @@
 db*/
 venv
+venv39
+.ragatouille
 .idea
 .chainlit
 .files

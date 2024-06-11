@@ -1,4 +1,4 @@
-rag-function: "cosine_similarity_rerank"
+rag-function: "simple"
 llm-query-template: |-
   Answer the following question based on this context:
 

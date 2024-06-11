@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from langchain_core.vectorstores import VectorStoreRetriever
 
+from langchain.retrievers import ContextualCompressionRetriever
 template_multiquery = """You are a helpful assistant that generates multiple sub-questions related to an input question.
 The goal is to break down the input into a set of sub-problems / sub-questions that can be answers in isolation.
 Generate multiple search queries related to: {question}
@@ -18,8 +19,8 @@ The three queries are (3 queries):"""
 
 class ContextRetriever(ABC):
 
-    def __init__(self, retriever: VectorStoreRetriever):
-        self.retriever:VectorStoreRetriever = retriever
+    def __init__(self, retriever: ContextualCompressionRetriever):
+        self.retriever:ContextualCompressionRetriever = retriever
 
     @abstractmethod
     def query_context_chain(self):
